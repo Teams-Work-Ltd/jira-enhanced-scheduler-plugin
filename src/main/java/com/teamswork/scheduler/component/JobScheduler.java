@@ -3,11 +3,11 @@ package com.teamswork.scheduler.component;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.scheduler.SchedulerService;
-import com.atlassian.scheduler.config.JobRunnerKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+@SuppressWarnings("unused")
 @Component
 public class JobScheduler extends PluginStateListener {
     private static final Logger log = LoggerFactory.getLogger(JobScheduler.class);
@@ -19,7 +19,6 @@ public class JobScheduler extends PluginStateListener {
     private final TimedJobRunner6 timedJobRunner6;
 
     private final SchedulerService schedulerService;
-
 
     public JobScheduler(@ComponentImport final EventPublisher eventPublisher,
                         final TimedJobRunner timedJobRunner,

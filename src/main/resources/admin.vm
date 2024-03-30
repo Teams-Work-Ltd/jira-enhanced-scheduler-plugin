@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>$i18n.getText("jes.title")</title>
+  <meta name="decorator" content="atl.admin">
+  $webResourceManager.requireResource("com.teamswork.scheduler.jira-enhanced-scheduler-plugin:jira-enhanced-scheduler-plugin-resources")
+  <style>
+    .jes-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .jes-container h1 {
+      color: #007bff;
+    }
+    .jes-container p {
+      margin-bottom: 15px;
+    }
+    .jes-container .section {
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    .jes-container .section h3 {
+      margin-top: 0;
+    }
+    .jes-container .field {
+      margin-bottom: 10px;
+    }
+    .jes-container .button {
+      padding: 8px 20px;
+      border: none;
+      border-radius: 4px;
+      background-color: #007bff;
+      color: #fff;
+      cursor: pointer;
+    }
+    /* Toggle switch styling */
+    .toggle {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 20px;
+      top: 3px;
+      padding-left: 2px;
+    }
+    .toggle input {
+      display: none;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      border-radius: 20px;
+      transition: .4s;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      border-radius: 50%;
+      transition: .4s;
+    }
+    input:checked + .slider {
+      background-color: #007bff;
+    }
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+    /* Style for the final form */
+    .jes-container .final-form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-top: 5px;
+    }
+    .jes-container .final-form .field {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .jes-container .final-form .field label {
+      flex: 0 0 200px; /* Adjust label width */
+      font-weight: bold
+
+    }
+    .jes-container .final-form .important {
+      border: 1px solid #ffc107;
+      border-radius: 3px;
+      background-color: #fff3cd;
+      padding: 10px;
+      font-weight: bold;
+    }
+
+    .jes-container .final-form .hidden-errors {
+      display: none; /* Initially hide the errors div */
+    }
+    .jes-container .final-form .active-errors {
+      display: block;
+      border: 1px solid #b71c1c;
+      border-radius: 3px;
+      background-color: #ffebee;
+      padding: 5px;
+      font-weight: strong;
+    }
+
+    .jes-container .final-form .success-message {
+      background-color: #d4edda; /* Pale green background color */
+      border: 1px solid #c3e6cb; /* Darker border color */
+      color: #155724; /* Dark green text color */
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+    }
+
+    .jes-container .final-form .active-errors .error {
+      padding-left: 5px;
+    }
+
+    .jes-container .final-form .field .read-only-input {
+      flex: 1;
+      background-color: #f8f9fa;
+      padding: 8px;
+      border-radius: 4px;
+    }
+    .jes-container .final-form .field .button {
+      flex: 0 0 auto;
+      margin-left: 20px;
+    }
+    /* Custom tick and cross styles */
+    .tick::before {
+      content: "\2714";
+      color: green;
+    }
+    .cross::before {
+      content: "\2718";
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="jes-container">
+    <h1>$i18n.getText("jes.title")</h1>
+    <p>$i18n.getText("jes.description")</p>
+    <p>$i18n.getText("jes.description2")</p>
+    <p><strong>$i18n.getText("jes.description3")</strong></p>
+    <p>$i18n.getText("jes.description4")</p>
+    <p>$i18n.getText("jes.description5")</p>
+
+    <div class="section">
+      <h3>$i18n.getText("jes.scheduler.configure.title")</h3>
+      <form id="configure-threads-form" class="aui final-form">
+        <div class="field2">
+          <label for="extraThreadsToConfigure">$i18n.getText("jes.thread.count")</label>
+          <input type="text" id="extraThreadsToConfigure" name="extraThreadsToConfigure" class="aui text">
+          <input type="submit" value="$i18n.getText("jes.save.label")" class="aui-button aui-button-primary">
+        </div>
+        <div class="description">
+          $i18n.getText("jes.scheduler.configure.context")
+        </div>
+        <div id="configuration-errors" class="hidden-errors">
+            <span id="extraThreadsToConfigureError" class="error"></span>
+        </div>
+        <div id="configuration-success" class="success-message" style="display: none;">
+          Configuration updated successfully!
+        </div>
+      </form>
+    </div>
+
+    <div class="section">
+      <h3>$i18n.getText("jes.scheduler.manage.title")</h3>
+      <form id="manage-scheduler-form" class="aui final-form">
+        <div class="field2">
+          <label>Scheduler is running: </label>
+          <label class="toggle">
+            <input type="checkbox" id="toggleScheduler">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="description">
+          $i18n.getText("jes.scheduler.start.stop.context")
+        </div>
+      </form>
+    </div>
+
+    <div class="section aui">
+      <h3>$i18n.getText("jes.scheduler.info.title")</h3>
+
+      <form id="destroy-thread-group-form" class="final-form aui">
+        <div class="description important">$i18n.getText("jes.scheduler.thread.group.context")</div>
+        <div class="field">
+          <label for="schedulerReconfigured">$i18n.getText("jes.scheduler.reconfigured")</label>
+          <span id="schedulerReconfigured" class="read-only-input"></span>
+        </div>
+        <div class="field">
+          <label for="extraThreadsRunning">$i18n.getText("jes.thread.count.label")</label>
+          <span id="extraThreadsRunning" class="read-only-input"></span>
+        </div>
+        <div class="field">
+          <label for="threadGroupName">$i18n.getText("jes.thread.group.name")</label>
+          <span id="threadGroupName" class="read-only-input"></span>
+          <input type="submit" class="aui-button aui-button-primary" name="destroy-thread-group" id="destroy-thread-group" value="Destroy">
+        </div>
+        <div class="field">
+          <label for="extraThreadGroupStarted">$i18n.getText("jes.thread.extra.group.started")</label>
+          <span id="extraThreadGroupStarted" class="read-only-input"></span>
+        </div>
+        <div class="field">
+          <label for="defaultThreadGroup">$i18n.getText("jes.default.thread.group.name")</label>
+          <span id="defaultThreadGroup" class="read-only-input"></span>
+        </div>
+      </div>
+    </form>
+  </div>
+
+</body>
+</html>

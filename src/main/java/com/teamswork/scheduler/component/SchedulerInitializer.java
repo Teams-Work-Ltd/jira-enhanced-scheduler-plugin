@@ -11,7 +11,8 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Component
 public class SchedulerInitializer extends PluginStateListener {
-    public static final String SCHEDULER_THREADS_KEY_VALUE = "8";
+    public static final String SCHEDULER_THREADS_VALUE = "4";
+    public static final int DEFAULT_THREAD_COUNT = 4;
     public static final String SCHEDULER_THREADS_KEY = "jes-scheduler-threads-key";
 
     private static final Logger log = LoggerFactory.getLogger(SchedulerInitializer.class);
@@ -28,14 +29,12 @@ public class SchedulerInitializer extends PluginStateListener {
     protected void onAppStart() {
         try {
             final String key = applicationProperties.getString(SCHEDULER_THREADS_KEY);
-            log.debug("**********************************************");
             if (isEmpty(key)) {
                 log.debug("Setting default scheduler threads value.");
-                applicationProperties.setString(SCHEDULER_THREADS_KEY, SCHEDULER_THREADS_KEY_VALUE);
+                applicationProperties.setString(SCHEDULER_THREADS_KEY, SCHEDULER_THREADS_VALUE);
             } else {
                 log.debug("Default scheduler value already set.");
             }
-            log.debug("**********************************************");
         } catch (final Exception e) {
             log.error("Error setting the default scheduler value key. ", e);
         }

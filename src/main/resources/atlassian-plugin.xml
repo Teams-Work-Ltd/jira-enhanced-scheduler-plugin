@@ -25,5 +25,15 @@
           path="/jes" version="1.0">
         <description key="project-status-rest-resource.description">The Enhanced scheduler resource</description>
     </rest>
-    
+
+    <servlet key="admin-servlet" class="com.teamswork.scheduler.servlet.AdminServlet">
+        <url-pattern>/jes/admin</url-pattern>
+    </servlet>
+
+    <web-item key="jes-menu-item2" i18n-name-key="jes.admin.label" section="advanced_menu_section/advanced_section" weight="10" application="jira">
+        <description>Link to the Jira enhanced scheduler configuration.</description>
+        <label key="jes.admin.label" />
+        <link linkId="jes-admin-link">/plugins/servlet/jes/admin</link>
+    </web-item>
+
 </atlassian-plugin>
