@@ -92,8 +92,6 @@ public class EnhancedJiraCaesiumSchedulerConfiguration implements CaesiumSchedul
             log.debug("Worker thread count not set in application properties. Using default value.");
             workerThreadCount = DEFAULT_THREAD_COUNT;
         }
-        log.debug("Worker thread count set to: " + workerThreadCount);
         return workerThreadCount;
     }
-
 }

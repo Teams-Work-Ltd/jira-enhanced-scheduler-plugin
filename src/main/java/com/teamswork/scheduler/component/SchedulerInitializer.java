@@ -11,8 +11,8 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Component
 public class SchedulerInitializer extends PluginStateListener {
-    public static final String SCHEDULER_THREADS_VALUE = "4";
-    public static final int DEFAULT_THREAD_COUNT = 4;
+    public static final String SCHEDULER_THREADS_VALUE = "2";
+    public static final int DEFAULT_THREAD_COUNT = 2;
     public static final String SCHEDULER_THREADS_KEY = "jes-scheduler-threads-key";
 
     private static final Logger log = LoggerFactory.getLogger(SchedulerInitializer.class);

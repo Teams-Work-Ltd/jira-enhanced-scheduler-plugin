@@ -10,9 +10,6 @@
       margin: 0 auto;
       padding: 20px;
     }
-    .jes-container h1 {
-      color: #007bff;
-    }
     .jes-container p {
       margin-bottom: 15px;
     }
@@ -92,7 +89,10 @@
     .jes-container .final-form .field label {
       flex: 0 0 200px; /* Adjust label width */
       font-weight: bold
-
+    }
+    .jes-container .final-form .field-buttons {
+        display: flex;
+        align-items: center;
     }
     .jes-container .final-form .important {
       border: 1px solid #ffc107;
@@ -103,7 +103,7 @@
     }
 
     .jes-container .final-form .hidden-errors {
-      display: none; /* Initially hide the errors div */
+      display: none;
     }
     .jes-container .final-form .active-errors {
       display: block;
@@ -115,9 +115,9 @@
     }
 
     .jes-container .final-form .success-message {
-      background-color: #d4edda; /* Pale green background color */
-      border: 1px solid #c3e6cb; /* Darker border color */
-      color: #155724; /* Dark green text color */
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
       padding: 10px;
       margin-top: 10px;
       border-radius: 5px;
@@ -156,14 +156,24 @@
     <p><strong>$i18n.getText("jes.description3")</strong></p>
     <p>$i18n.getText("jes.description4")</p>
     <p>$i18n.getText("jes.description5")</p>
+    <p>
+      $i18n.getText("jes.description6")
+      <ul>
+        <li>$i18n.getText("jes.description7")</li>
+        <li>$i18n.getText("jes.description8")</li>
+        <li>$i18n.getText("jes.description9")</li>
+        <li>$i18n.getText("jes.description10")</li>
+      </ul>
+    </p>
 
     <div class="section">
       <h3>$i18n.getText("jes.scheduler.configure.title")</h3>
       <form id="configure-threads-form" class="aui final-form">
-        <div class="field2">
+        <div class="field">
           <label for="extraThreadsToConfigure">$i18n.getText("jes.thread.count")</label>
-          <input type="text" id="extraThreadsToConfigure" name="extraThreadsToConfigure" class="aui text">
-          <input type="submit" value="$i18n.getText("jes.save.label")" class="aui-button aui-button-primary">
+          <input type="text" id="extraThreadsToConfigure" name="extraThreadsToConfigure" class="aui text">&nbsp;&nbsp;
+          <input type="submit" value="$i18n.getText("jes.save.label")" class="aui-button aui-button-primary" id="reconfigure-scheduler">
+          <input type="button" value="$i18n.getText("jes.start.extra.threads.label")" class="aui-button" id="start-extra-threads">
         </div>
         <div class="description">
           $i18n.getText("jes.scheduler.configure.context")
@@ -172,7 +182,10 @@
             <span id="extraThreadsToConfigureError" class="error"></span>
         </div>
         <div id="configuration-success" class="success-message" style="display: none;">
-          Configuration updated successfully!
+          $i18n.getText("jes.configure.success")
+        </div>
+        <div id="thread-start-success" class="success-message" style="display: none;">
+          $i18n.getText("jes.new.threads.success")
         </div>
       </form>
     </div>
@@ -196,8 +209,7 @@
     <div class="section aui">
       <h3>$i18n.getText("jes.scheduler.info.title")</h3>
 
-      <form id="destroy-thread-group-form" class="final-form aui">
-        <div class="description important">$i18n.getText("jes.scheduler.thread.group.context")</div>
+      <form id="thread-group-info-form" class="final-form aui">
         <div class="field">
           <label for="schedulerReconfigured">$i18n.getText("jes.scheduler.reconfigured")</label>
           <span id="schedulerReconfigured" class="read-only-input"></span>
@@ -208,8 +220,7 @@
         </div>
         <div class="field">
           <label for="threadGroupName">$i18n.getText("jes.thread.group.name")</label>
-          <span id="threadGroupName" class="read-only-input"></span>
-          <input type="submit" class="aui-button aui-button-primary" name="destroy-thread-group" id="destroy-thread-group" value="Destroy">
+          <span id="threadGroupName" class="read-only-input"></span>&nbsp;&nbsp;
         </div>
         <div class="field">
           <label for="extraThreadGroupStarted">$i18n.getText("jes.thread.extra.group.started")</label>
@@ -222,6 +233,5 @@
       </div>
     </form>
   </div>
-
 </body>
 </html>

@@ -10,8 +10,8 @@
     <version>1.0.0-SNAPSHOT</version>
 
     <organization>
-        <name>Example Company</name>
-        <url>http://www.example.com/</url>
+        <name>Teams, Work.</name>
+        <url>http://teams-work.co.uk</url>
     </organization>
 
     <scm>
@@ -19,7 +19,7 @@
     </scm>
 
     <name>jira-enhanced-scheduler-plugin</name>
-    <description>This is the com.teamswork.scheduler:jira-enhanced-scheduler-plugin plugin for Atlassian JIRA.</description>
+    <description>This is an plugin that allows extra threads to be added to the Atlassian Scheduler.</description>
     <packaging>atlassian-plugin</packaging>
 
     <dependencies>

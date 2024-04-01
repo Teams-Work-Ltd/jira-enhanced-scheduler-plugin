@@ -35,7 +35,7 @@ public class ConfigurationResource {
             return Response.status(Response.Status.BAD_REQUEST).entity(result).build();
         }
 
-        result = schedulerConfigurator.replaceCaesiumConfiguration();
+        result = schedulerConfigurator.replaceSchedulerConfiguration();
         return Response.ok(result).build();
     }
 
@@ -43,7 +43,7 @@ public class ConfigurationResource {
     @Path("/reconfigure")
     @Produces({MediaType.APPLICATION_JSON})
     public Response reconfigureScheduler() {
-        final OperationResult result = schedulerConfigurator.replaceCaesiumConfiguration();
+        final OperationResult result = schedulerConfigurator.replaceSchedulerConfiguration();
         return Response.ok(result).build();
     }
 
@@ -55,19 +55,19 @@ public class ConfigurationResource {
         return Response.ok(result).build();
     }
 
-    @DELETE
-    @Path("/destroyThreadGroup")
-    @Produces({MediaType.APPLICATION_JSON})
-    public Response destroyThreadGroup(final String threadGroupName) {
-        final OperationResult result = schedulerConfigurator.destroyThreadGroupByName(threadGroupName);
-        return Response.ok(result).build();
-    }
-
     @POST
     @Path("/start")
     @Produces({MediaType.APPLICATION_JSON})
     public Response startScheduler() {
         final OperationResult result = schedulerConfigurator.startScheduler();
+        return Response.ok(result).build();
+    }
+
+    @POST
+    @Path("/startWithConfiguration")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response startSchedulerWithExtraConfiguredThreads() {
+        final OperationResult result = schedulerConfigurator.startSchedulerWithExtraThreadGroup();
         return Response.ok(result).build();
     }
 
@@ -82,8 +82,8 @@ public class ConfigurationResource {
     @GET
     @Path("/config")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getCaesiumConfig() {
-        final String configurationDetails = schedulerConfigurator.getCaesiumConfig();
+    public Response getSchedulerConfig() {
+        final String configurationDetails = schedulerConfigurator.getSchedulerConfig();
         return Response.ok(configurationDetails).build();
     }
 
@@ -92,5 +92,29 @@ public class ConfigurationResource {
     public Response getCurrentConfig() {
         final CurrentConfiguration config = schedulerConfigurator.getCurrentConfiguration();
         return Response.ok(config).build();
+    }
+
+    /**
+     * Attempt to destroy the extra thread group in the scheduler. This is highly likely to leave
+     * your Jira instance in an unstable state. Recommend not using this.
+     */
+    @DELETE
+    @Path("/destroyThreadGroup")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response destroyThreadGroup(final String threadGroupName) {
+        final OperationResult result = schedulerConfigurator.destroyThreadGroupByName(threadGroupName);
+        return Response.ok(result).build();
+    }
+
+    /**
+     * Attempt to destroy all extra threads group in the scheduler. This is highly likely to leave
+     * your Jira instance in an unstable state. Recommend not using this.
+     */
+    @DELETE
+    @Path("/destroyAllThreadGroups")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response destroyAllThreadGroup() {
+        final OperationResult result = schedulerConfigurator.destroyAllExtraSchedulerThreadGroups();
+        return Response.ok(result).build();
     }
 }

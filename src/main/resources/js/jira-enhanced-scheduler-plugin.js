@@ -14,10 +14,8 @@
     var isStarted = config.extraThreadGroupStarted;
     if (isStarted) {
       $("#extraThreadGroupStarted").html('<span class="tick"></span>');
-      $("#destroy-thread-group").prop('disabled', false);
     } else {
       $("#extraThreadGroupStarted").html('<span class="cross"></span>');
-      $("#destroy-thread-group").prop('disabled', true);
     }
 
     // Visual cues for scheduler running.
@@ -30,6 +28,8 @@
     // Visual cues for scheduler reconfigured.
     if (config.schedulerReconfigured) {
       $("#schedulerReconfigured").html('<span class="tick"></span>');
+      $("#reconfigure-scheduler").removeClass("aui-button-primary");
+      $("#start-extra-threads").addClass("aui-button-primary");
     } else {
       $("#schedulerReconfigured").html('<span class="cross"></span>'); // Show cross
     }
@@ -61,7 +61,7 @@
         $("#configuration-errors").removeClass("active-errors");
         $("#configuration-errors").addClass("hidden-errors");
         fetchAndPopulateForm();
-        $("#configuration-success").fadeIn().delay(2000).fadeOut();
+        $("#configuration-success").fadeIn().delay(5000).fadeOut();
       }).fail(function(jqXHR, textStatus, errorThrown) {
         var errorMessage = jqXHR.responseJSON.message;
         $("#extraThreadsToConfigureError").text(errorMessage);
@@ -75,6 +75,33 @@
     $("#configure-threads-form").on("submit", function(e) {
       e.preventDefault();
       reconfigureScheduler();
+    });
+
+    // Function to start new threads in the scheduler.
+    function startNewThreadGroup() {
+      $.ajax({
+        url: url + "/startWithConfiguration",
+        type: "POST",
+        contentType: "application/json",
+        processData: false
+      }).done(function() {
+        fetchAndPopulateForm();
+        $("#configuration-errors").removeClass("active-errors");
+        $("#configuration-errors").addClass("hidden-errors");
+        $("#thread-start-success").fadeIn().delay(5000).fadeOut();
+      }).fail(function(jqXHR, textStatus, errorThrown) {
+        var errorMessage = jqXHR.responseJSON.message;
+        $("#extraThreadsToConfigureError").text(errorMessage);
+        $("#configuration-errors").removeClass("hidden-errors");
+        $("#configuration-errors").addClass("active-errors");
+        fetchAndPopulateForm();
+      });
+    }
+
+    // Event listener for form submission to reconfigure scheduler.
+    $("#start-extra-threads").on("click", function(e) {
+      e.preventDefault();
+      startNewThreadGroup();
     });
 
     // Function to toggle the scheduler.
@@ -104,25 +131,6 @@
     // Event listener for form submission to toggle scheduler.
     $("#toggleScheduler").on("change", function() {
        toggleScheduler();
-    });
-
-    // Function to destroy the thread group
-    function destroyThreadGroup() {
-      $.ajax({
-        url: url + "/destroyThreadGroup",
-        type: "DELETE",
-        contentType: "application/json",
-        data: $("#threadGroupName").text(),
-        processData: false
-      }).done(function() {
-        fetchAndPopulateForm();
-      });
-    }
-
-    // Event listener for form submission to destroy thread group
-    $("#destroy-thread-group-form").on("submit", function(e) {
-      e.preventDefault();
-      destroyThreadGroup();
     });
   });
 })(AJS.$ || jQuery);
