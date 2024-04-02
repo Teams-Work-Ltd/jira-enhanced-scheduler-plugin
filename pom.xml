@@ -15,11 +15,21 @@
     </organization>
 
     <scm>
-        <connection>scm:git:@github.com:martyh/jira-enhanced-scheduler-plugin.git</connection>
+        <connection>scm:git:git@github.com:Teams-Work-Ltd/jira-enhanced-scheduler-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:Teams-Work-Ltd/jira-enhanced-scheduler-plugin.git</developerConnection>
+        <tag>HEAD</tag>
     </scm>
 
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/Teams-Work-Ltd/jira-enhanced-scheduler-plugin</url>
+        </repository>
+    </distributionManagement>
+
     <name>jira-enhanced-scheduler-plugin</name>
-    <description>This is an plugin that allows extra threads to be added to the Atlassian Scheduler.</description>
+    <description>This is n plugin that allows extra threads to be added to the Atlassian Scheduler.</description>
     <packaging>atlassian-plugin</packaging>
 
     <dependencies>
