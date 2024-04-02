@@ -6,12 +6,17 @@ This introduces some new capabilities to configure the Jira scheduler.
 The main feature is the ability to configure the number of threads for the scheduler. 
 This can be useful if you have a large number of jobs that need to be executed in parallel. 
 
+You can also now start and stop the scheduler and view some limited information about the thread group state.
+
 The existing scheduler is hard limited to 4 threads. This will allow you to either use the REST api to reconfigure
 the number of threads, or there is an admin section in the Jira administration area to do this also.
 
 Note: this is additive. So, the original 4 threads will still be used, but you can add more threads to this. 
 Unfortunately due to limitations in the scheduler code, managing these threads is nigh-on impossible without
 creating a new version of the scheduler. This means that the only way to reset the threads is to restart the Jira instance/node.
+
+Note - this also works on a per node in cluster basis - i.e. if you start extra threads on one node in a cluster, they will be pinned to that node.
+To add extra threads in other nodes, you need to go directly to that node, bypassing the load balancer.
 
 
 Going deeper
