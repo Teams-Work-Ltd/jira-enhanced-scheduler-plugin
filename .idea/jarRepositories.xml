@@ -17,6 +17,11 @@
       <option name="url" value="file://${env.ATLAS_HOME}/repository" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="reposilite-repository" />
+      <option name="name" value="Reposilite Repository" />
+      <option name="url" value="http://132.145.25.133:8080/releases" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="central" />
       <option name="name" value="Maven Central repository" />
       <option name="url" value="https://repo1.maven.org/maven2" />

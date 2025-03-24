@@ -144,6 +144,15 @@
                 <artifactId>jira-maven-plugin</artifactId>
                 <version>${amps.version}</version>
                 <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>default-generate-rest-docs</id>
+                        <phase>compile</phase>
+                        <goals>
+<!--                            <goal>generate-rest-docs</goal>-->
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <productVersion>${jira.version}</productVersion>
                     <productDataVersion>${jira.version}</productDataVersion>
@@ -195,8 +204,8 @@
     </build>
 
     <properties>
-        <jira.version>8.20.0</jira.version>
-        <amps.version>8.1.2</amps.version>
+        <jira.version>9.12.15</jira.version>
+        <amps.version>9.0.4</amps.version>
         <atlassian.spring.scanner.version>2.1.7</atlassian.spring.scanner.version>
         <!-- This property ensures consistency between the key in atlassian-plugin.xml and the OSGi bundle's key. -->
         <atlassian.plugin.key>${project.groupId}.${project.artifactId}</atlassian.plugin.key>
