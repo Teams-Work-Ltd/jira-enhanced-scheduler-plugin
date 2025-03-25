@@ -36,7 +36,9 @@ public class ConfigurationResource {
         }
 
         result = schedulerConfigurator.replaceSchedulerConfiguration();
-        return Response.ok(result).build();
+        return result.isSuccess() ?
+                Response.ok(result).build() :
+                Response.status(Response.Status.BAD_REQUEST).entity(result).build();
     }
 
     @POST
@@ -44,7 +46,9 @@ public class ConfigurationResource {
     @Produces({MediaType.APPLICATION_JSON})
     public Response reconfigureScheduler() {
         final OperationResult result = schedulerConfigurator.replaceSchedulerConfiguration();
-        return Response.ok(result).build();
+        return result.isSuccess() ?
+                Response.ok(result).build() :
+                Response.status(Response.Status.BAD_REQUEST).entity(result).build();
     }
 
     @POST
@@ -52,7 +56,9 @@ public class ConfigurationResource {
     @Produces({MediaType.APPLICATION_JSON})
     public Response setThreadCount(final Integer threads) {
         final OperationResult result = schedulerConfigurator.configureThreadCount(threads);
-        return Response.ok(result).build();
+        return result.isSuccess() ?
+                Response.ok(result).build() :
+                Response.status(Response.Status.BAD_REQUEST).entity(result).build();
     }
 
     @POST
@@ -60,7 +66,9 @@ public class ConfigurationResource {
     @Produces({MediaType.APPLICATION_JSON})
     public Response startScheduler() {
         final OperationResult result = schedulerConfigurator.startScheduler();
-        return Response.ok(result).build();
+        return result.isSuccess() ?
+                Response.ok(result).build() :
+                Response.status(Response.Status.BAD_REQUEST).entity(result).build();
     }
 
     @POST
@@ -68,7 +76,9 @@ public class ConfigurationResource {
     @Produces({MediaType.APPLICATION_JSON})
     public Response startSchedulerWithExtraConfiguredThreads() {
         final OperationResult result = schedulerConfigurator.startSchedulerWithExtraThreadGroup();
-        return Response.ok(result).build();
+        return result.isSuccess() ?
+                Response.ok(result).build() :
+                Response.status(Response.Status.BAD_REQUEST).entity(result).build();
     }
 
     @POST
@@ -76,7 +86,9 @@ public class ConfigurationResource {
     @Produces({MediaType.APPLICATION_JSON})
     public Response pauseScheduler() {
         final OperationResult result = schedulerConfigurator.pauseScheduler();
-        return Response.ok(result).build();
+        return result.isSuccess() ?
+                Response.ok(result).build() :
+                Response.status(Response.Status.BAD_REQUEST).entity(result).build();
     }
 
     @GET
@@ -103,7 +115,9 @@ public class ConfigurationResource {
     @Produces({MediaType.APPLICATION_JSON})
     public Response destroyThreadGroup(final String threadGroupName) {
         final OperationResult result = schedulerConfigurator.destroyThreadGroupByName(threadGroupName);
-        return Response.ok(result).build();
+        return result.isSuccess() ?
+                Response.ok(result).build() :
+                Response.status(Response.Status.BAD_REQUEST).entity(result).build();
     }
 
     /**
@@ -115,6 +129,8 @@ public class ConfigurationResource {
     @Produces({MediaType.APPLICATION_JSON})
     public Response destroyAllThreadGroup() {
         final OperationResult result = schedulerConfigurator.destroyAllExtraSchedulerThreadGroups();
-        return Response.ok(result).build();
+        return result.isSuccess() ?
+                Response.ok(result).build() :
+                Response.status(Response.Status.BAD_REQUEST).entity(result).build();
     }
 }

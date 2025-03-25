@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Named;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -99,15 +101,26 @@ public class SchedulerConfigurator {
             final CaesiumSchedulerService caesiumSchedulerService = ComponentAccessor.getComponent(CaesiumSchedulerService.class);
             final Field field = caesiumSchedulerService.getClass().getSuperclass().getDeclaredField("config");
             field.setAccessible(true);
-            final Field modifiersField = Field.class.getDeclaredField("modifiers");
-            modifiersField.setAccessible(true);
-            modifiersField.setInt(field, field.getModifiers() & ~java.lang.reflect.Modifier.FINAL);
+
+            if (isJava8()) {
+                // Java 8 approach (uses "modifiers" field, allowed in Java 8)
+                Field modifiersField = Field.class.getDeclaredField("modifiers");
+                modifiersField.setAccessible(true);
+                modifiersField.setInt(field, field.getModifiers() & ~java.lang.reflect.Modifier.FINAL);
+            } else {
+                // Java 9+ approach (uses VarHandle, safe in Java 9+)
+                VarHandle modifiersVarHandle = MethodHandles.privateLookupIn(Field.class, MethodHandles.lookup())
+                        .findVarHandle(Field.class, "modifiers", int.class);
+                modifiersVarHandle.set(field, field.getModifiers() & ~java.lang.reflect.Modifier.FINAL);
+            }
+
             field.set(caesiumSchedulerService, enhancedConfig);
             schedulerReconfigured = true;
             threadGroupState.put(getThreadGroupName(), PENDING);
         } catch (Exception e) {
-            log.error("Error re-configuring the caesium scheduler: " + e.getMessage());
+            log.error("Error re-configuring the caesium scheduler", e);
             schedulerReconfigured = false;
+            return new OperationResult(false, i18nHelper.getText("jes.scheduler.failed.to.configure"));
         }
 
         if (schedulerReconfigured) {
@@ -144,11 +157,11 @@ public class SchedulerConfigurator {
                 Set<JobRunnerKey> keys= caesiumSchedulerService.getJobRunnerKeysForAllScheduledJobs();
                 for (JobRunnerKey key : keys) {
                     JobRunner jobRunner = caesiumSchedulerService.getJobRunner(key);
-                    log.debug("JobRunner: " + jobRunner);
+                    log.debug("JobRunner: {}", jobRunner);
                 }
             }
         } catch (Exception e) {
-            log.error("Error pausing the caesium scheduler: " + e.getMessage());
+            log.error("Error pausing the caesium scheduler: {}", e.getMessage());
         }
         return new OperationResult(true, i18nHelper.getText("jes.scheduler.paused"));
     }
@@ -170,7 +183,8 @@ public class SchedulerConfigurator {
 
             }
         } catch (Exception e) {
-            log.error("Error starting the caesium scheduler: " + e.getMessage());
+            log.error("Error starting the caesium scheduler: {}", e.getMessage());
+            return new OperationResult(false, i18nHelper.getText("jes.caesium.scheduler.failed.to.start"));
         }
 
         return new OperationResult(threadGroupExists(getThreadGroupName()), i18nHelper.getText("jes.scheduler.started"));
@@ -192,7 +206,9 @@ public class SchedulerConfigurator {
                 field.setAccessible(true);
                 AtomicBoolean schedulerStarted = (AtomicBoolean) field.get(service);
                 schedulerStarted.set(false);
-            }
+            } else {
+                log.info("The scheduler has not been reconfigured successfully.");
+                return new OperationResult(false, i18nHelper.getText("jes.scheduler.failed.to.reconfigure"));            }
 
             service.start();
             if (threadGroupExists(getThreadGroupName())) {
@@ -200,6 +216,7 @@ public class SchedulerConfigurator {
             }
         } catch (Exception e) {
             log.error("Error starting the caesium scheduler: " + e.getMessage());
+            return new OperationResult(false, i18nHelper.getText("jes.scheduler.failed.to.start"));
         }
 
         return new OperationResult(threadGroupExists(getThreadGroupName()), i18nHelper.getText("jes.scheduler.started"));
@@ -232,7 +249,7 @@ public class SchedulerConfigurator {
                     ", getDefaultTimeZone=" + config.getDefaultTimeZone() +
                     " }";
         } catch (Exception e) {
-            log.error("Error getting the caesium scheduler configuration: " + e.getMessage());
+            log.error("Error getting the caesium scheduler configuration: {}", e.getMessage());
         }
         return configurationDetails;
     }
@@ -277,20 +294,20 @@ public class SchedulerConfigurator {
      * @return a message indicating the success or failure of the operation.
      */
     public OperationResult destroyThreadGroupByName(final String threadGroupName) {
-        log.debug("Destroying the extra thread group in the Caesium scheduler:" + threadGroupName);
+        log.debug("Destroying the extra thread group in the Caesium scheduler:{}", threadGroupName);
         pauseScheduler();
         final String actualThreadGroupName = extractThreadGroupName(threadGroupName);
         try {
             if (this.schedulerReconfigured && threadGroupExists(actualThreadGroupName)) {
                 threadGroupState.put(actualThreadGroupName, DESTROYED);
                 destroyThreadGroup(actualThreadGroupName);
-                log.debug("The thread group named: " + actualThreadGroupName + " has been destroyed successfully.");
+                log.debug("The thread group named: {} has been destroyed successfully.", actualThreadGroupName);
             } else {
                 log.warn("Cannot destroy the extra thread group in the Caesium scheduler because the scheduler has not" +
                         " been re-configured or the extra thread group has not been started.");
             }
         } catch (Exception e) {
-            log.error("Error destroying the extra thread group: " + e.getMessage());
+            log.error("Error destroying the extra thread group: {}", e.getMessage());
         }
 
         return new OperationResult(threadGroupExists(threadGroupName), i18nHelper.getText("jes.thread.group.destroyed", threadGroupName));
@@ -330,7 +347,7 @@ public class SchedulerConfigurator {
             AtomicInteger threadCounterValue = (AtomicInteger) field.get(null);
             threadGroupCount = threadCounterValue.get();
         } catch (Exception e) {
-            log.error("Error getting the thread count: " + e.getMessage());
+            log.error("Error getting the thread count: {}", e.getMessage());
         }
         return threadGroupCount;
     }
@@ -345,14 +362,19 @@ public class SchedulerConfigurator {
                     try {
                         thread.stop();
                     } catch (Exception e) {
-                        log.error("Error interrupting the thread: " + e.getMessage());
-                        log.error("Thread name: " + thread.getName());
+                        log.error("Error interrupting the thread: {}", e.getMessage());
+                        log.error("Thread name: {}", thread.getName());
                     }
                 }
                 threadGroup.destroy();
             }
         } catch (Exception e) {
-            log.error("Error destroying the thread group: " + e.getMessage());
+            log.error("Error destroying the thread group: {}", e.getMessage());
         }
+    }
+
+    private boolean isJava8() {
+        String version = System.getProperty("java.version");
+        return version.startsWith("1.8");
     }
 }
