@@ -27,7 +27,7 @@
     </distributionManagement>
 
     <name>jira-enhanced-scheduler-plugin</name>
-    <description>This is n plugin that allows extra threads to be added to the Atlassian Scheduler.</description>
+    <description>This is a plugin that allows extra threads to be added to the Atlassian Scheduler.</description>
     <packaging>atlassian-plugin</packaging>
 
     <dependencies>
